@@ -37,6 +37,8 @@ paths:
           description: OK
       description: описание
       requestBody:
+        description: ''
+        required: true
         content:
           application/json:
             schema:
