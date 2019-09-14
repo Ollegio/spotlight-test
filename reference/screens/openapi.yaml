@@ -36,7 +36,22 @@ paths:
         '200':
           description: OK
       description: описание
-      requestBody: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            examples:
+              example-1:
+                value:
+                  email: test@test.test
+                  password: password99
+        description: ''
   /auth/me:
     get:
       tags:
