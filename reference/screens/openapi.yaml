@@ -26,7 +26,6 @@ paths:
           description: OK
       description: описание
       operationId: 'DisplayController::layout'
-      requestBody: {}
   /auth/login:
     post:
       tags:
