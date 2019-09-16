@@ -26,6 +26,7 @@ paths:
           description: OK
       description: описание
       operationId: 'DisplayController::layout'
+      requestBody: {}
   /auth/login:
     post:
       tags:
@@ -37,8 +38,6 @@ paths:
           description: OK
       description: описание
       requestBody:
-        description: ''
-        required: true
         content:
           application/json:
             schema:
@@ -48,6 +47,8 @@ paths:
                   type: string
                 password:
                   type: string
+        description: ''
+        required: true
   /auth/me:
     get:
       tags:
