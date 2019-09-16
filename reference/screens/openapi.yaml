@@ -338,5 +338,4 @@ components:
           type: integer
   securitySchemes: {}
 tags:
-  - name: auth
-df
+  - name: authdf
