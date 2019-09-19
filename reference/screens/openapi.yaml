@@ -6,6 +6,9 @@ info:
   contact:
     email: o.gnusarev@truemachine.ru
 servers:
+# Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Ollegio/Screens/1.0.0
   - url: 'http://localhost:8000/api'
   - url: 'https://screens-ftd-backend.truemachine.ru/api'
   - url: 'https://screens-ftd-backend-dev.truemachine.ru/api'
@@ -13,7 +16,8 @@ servers:
 paths:
   '/displays/{id}/layout':
     parameters:
-      - type: string
+      - schema:
+          type: integer
         name: id
         in: path
         required: true
@@ -87,6 +91,8 @@ paths:
       parameters:
         - name: stations
           in: query
+          schema:
+            type: integer
           description: 'Если stations=1, то подгружаются станции'
       responses:
         '200':
@@ -94,9 +100,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/City'
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/CityWithStations'
       description: описание
     post:
       tags:
@@ -106,9 +113,12 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
-            example:
-              foo: bar
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              title: f
       responses:
         '200':
           description: OK
@@ -117,6 +127,122 @@ paths:
               schema:
                 $ref: '#/components/schemas/City'
       description: описание
+  /cities/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - cities
+      summary: Информация о городе
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+    put:
+      tags:
+        - cities
+      summary: Информация о городе
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+    delete:
+      tags:
+        - cities
+      summary: Информация о городе
+      responses:
+        '200':
+          description: OK
+  /stations:
+    get:
+      tags:
+        - stations
+      summary: Получить список станций
+      operationId: 'StationController::index'
+      parameters:
+        - name: stations
+          in: query
+          schema:
+            type: integer
+          description: 'Если stations=1, то подгружаются станции'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Station'
+      description: описание
+    post:
+      tags:
+        - stations
+      summary: Store a newly created resource in storage.
+      operationId: 'StationController::store'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              title: f
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+      description: описание
+  /stations/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - stations
+      summary: Информация о станции
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+    put:
+      tags:
+        - stations
+      summary: Изменить станцию
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+    delete:
+      tags:
+        - stations
+      summary: Удалить станцию
+      responses:
+        '200':
+          description: OK
   /displays:
     get:
       tags:
@@ -159,7 +285,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Display'
       description: описание
-  'displays/{id}':
+  '/displays/{id}':
     get:
       tags:
         - displays
@@ -179,7 +305,7 @@ paths:
         name: id
         in: path
         required: true
-  'displays/{id}/status':
+  '/displays/{id}/status':
     get:
       tags:
         - displays
@@ -199,7 +325,7 @@ paths:
         name: id
         in: path
         required: true
-  'displays/{id}/screenshot/update':
+  '/displays/{id}/screenshot/update':
     get:
       tags:
         - displays
@@ -215,7 +341,7 @@ paths:
         name: id
         in: path
         required: true
-  'displays/{id}/screenshot':
+  '/displays/{id}/screenshot':
     get:
       description: скриншот
       tags:
@@ -231,7 +357,7 @@ paths:
         name: id
         in: path
         required: true
-  'displays/{id}/config/update':
+  '/displays/{id}/config/update':
     get:
       description: Обновить файл конфигурации
       tags:
@@ -247,7 +373,7 @@ paths:
         name: id
         in: path
         required: true
-  'displays/{id}/config':
+  '/displays/{id}/config':
     get:
       tags:
         - displays
@@ -263,6 +389,42 @@ paths:
         name: id
         in: path
         required: true
+  '/displays/{id}/lock':
+    get:
+      tags:
+        - displays
+      summary: Заблокировать/разблокировать экран
+      operationId: 'DisplayController::lock'
+      responses:
+        '200':
+          description: OK
+      description: передай где-нибудь параметр lock
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+  /stations/{id}/displays:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - stations
+      summary: Получить дисплеи на данной станции
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Display'
   /hello:
     get:
       tags:
@@ -282,9 +444,98 @@ paths:
       responses:
         '200':
           description: OK
+  /users/roles:
+    get:
+      tags:
+        - admin_users
+      summary: Список ролей пользователей
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+  /users:
+    get:
+      tags:
+        - admin_users
+      summary: Список пользователей
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - admin_users
+      summary: Добавить пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - admin_users
+      summary: Информация о пользователе
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      tags:
+        - admin_users
+      summary: Редактировать пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - admin_users
+      summary: Удалить пользователя
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
 components:
   schemas:
-    City:
+    CityWithStations:
       title: City
       type: object
       properties:
@@ -301,12 +552,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Station'
+    City:
+      title: City
+      type: object
+      properties:
+        id:
+          description: Class City
+          example: 1
+          type: integer
+        name:
+          description: Class City
+          example: Ульяновск
+          type: string
     Display:
       title: Display
       type: object
       properties:
-        station:
-          $ref: '#/components/schemas/Station'
         latitude:
           example: 13.37
           type: number
@@ -336,6 +597,28 @@ components:
           type: string
         id:
           type: integer
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+    Role:
+      title: Role
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
   securitySchemes: {}
 tags:
-  - name: authdf
+  - name: auth
